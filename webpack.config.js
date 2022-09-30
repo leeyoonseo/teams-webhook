@@ -16,24 +16,12 @@ const config = {
         host: 'localhost',
         historyApiFallback: true,
         proxy: {
-            '/webhook2': 'https://tmoncorp.webhook.office.com'
-            // {
-            //     target: 'https://tmoncorp.webhook.office.com/webhook2',
-            //     changeOrigin: true,
-            //     secure: false,
-            // },
+            '/webhookb2': {
+                target: 'https://tmoncorp.webhook.office.com',
+                changeOrigin: true,
+                secure: false,
+            },
         },
-        // devMiddleware: {
-        //     index: false, // specify to enable root proxying
-        // },
-        // proxy: {
-        //     context: () => true,
-        //     '/webhook2': {
-        //         target: 'https://tmoncorp.webhook.office.com/webhook2',
-        //         changeOrigin: true,
-        //         secure: false,
-        //     }
-        // },
     },
     plugins: [
         new HtmlWebpackPlugin({
@@ -71,13 +59,4 @@ const config = {
     },
 };
 
-module.exports = () => {
-if (isProduction) {
-    config.mode = 'production';
-    
-    
-} else {
-    config.mode = 'development';
-}
-return config;
-};
+module.exports = config;
