@@ -1,16 +1,1 @@
-# 🚀 Welcome to your new awesome project!
-
-This project has been created using **webpack-cli**, you can now run
-
-```
-npm run build
-```
-
-or
-
-```
-yarn build
-```
-
-to bundle your application
-# test-teams-webhook
+MS Teams Incoming Webhook 사용에 대한 학습 및 모듈화 테스트 작업
