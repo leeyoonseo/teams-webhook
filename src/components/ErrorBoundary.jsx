@@ -1,15 +1,54 @@
-// 1. ClassComponent
 import React from 'react';
-// import teamsWebhook from '../utils/teamsWebhook';
+import TeamsErrorHook from '../utils/TeamsErrorHook/index';
+
+const teamsChannelAPI = '/webhookb2/7d3fcf9f-30c9-4b1f-9290-ebfd7b3831d3@2f455741-b4a6-43b0-b9ae-e860bf49b020/IncomingWebhook/0356a389e55b430b8056f9d14b64c34d/e3761004-6a49-4e81-8ebf-43fdb0f27aca';
+
 
 class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+    this.errorhook = props.errorhook;
+  }
+
+  // error: 에러 내용
+  // info: 에러 발생한 위치
   componentDidCatch(error, errorInfo) {
-    console.log('error :>> ', error);
-    console.log('errorInfo :>> ', errorInfo);
-    // teamsWebhook(error);
-    // errorInfo
-    // at App (http://localhost:3000/static/js/bundle.js:32:51)
-    // at ErrorBoundary (http://localhost:3000/static/js/bundle.js:126:1)"
+    console.log('ErrorBoundary');
+    // console.log('ErrorBoundary error :>> ', error);
+    // console.log('ErrorBoundary errorInfo :>> ', errorInfo);
+
+    console.log('errorhook :>> ', this.errorhook);
+    this.errorhook.call(error);
+   
+    // new TeamsErrorHook({
+    //  project: 'Teams Webhook Demo',
+    //  channelUrl: teamsChannelAPI
+    // }).call(error);
+
+    // const info = {
+    //  project: 'teams-webhook'
+    // }
+    // errorHook({
+    //  info,
+    //  error,
+    // });
+
+    // error
+    // at eval (App.js:20:11)
+    // at commitHookEffectListMount (react-dom.development.js:23145:26)
+    // at commitPassiveMountOnFiber (react-dom.development.js:24921:13)
+    // at commitPassiveMountEffects_complete (react-dom.development.js:24886:9)
+    // at commitPassiveMountEffects_begin (react-dom.development.js:24873:7)
+    // at commitPassiveMountEffects (react-dom.development.js:24861:3)
+    // at flushPassiveEffectsImpl (react-dom.development.js:27034:3)
+    // at flushPassiveEffects (react-dom.development.js:26979:14)
+    // at eval (react-dom.development.js:26764:9)
+    // at workLoop (scheduler.development.js:266:34)
+
+    // info
+    // at App (webpack://my-webpack-project/./src/App.js?:19:51)
+    // at ErrorBoundary (webpack://my-webpack-project/./src/components/ErrorBoundary.jsx?:34:5)"
   }
 
   render() {
@@ -18,71 +57,3 @@ class ErrorBoundary extends React.Component {
 }
 
 export default ErrorBoundary;
-
-
-// import React from "react"
-// const MyErrorBoundary = React.Catch(function MyErrorBoundary(props, error) {
-//   if (error) {
-//     return (
-//       <div className="error-screen">
-//         <h2>An error has occured</h2>
-//         <h4>{error.message}</h4>
-//       </div>
-//     )
-//   } else {
-//     return <React.Fragment>{props.children}</React.Fragment>
-//   }
-// });
-
-// export default MyErrorBoundary;
-
-// import React from "react"
-
-// const ErrorBoundary = React.Catch(
-//   function ErrorBoundary(props, error) {
-//     // if (error) {
-//     //   // Sentry or Teams hook
-
-
-//     //   // fallback ui
-//     //   return (
-//     //     <div className="error-screen">
-//     //       <h2>An error has occured</h2>
-//     //       <h4>{error.message}</h4>
-//     //     </div>
-//     //   )
-//     // } else {
-//       return <React.Fragment>{props.children}</React.Fragment>
-//   //   }
-//   }
-// );
-// const ErrorBoundary = (props, error) => {
-//   console.log('props', props)
-//   console.log('error', error)
-//     if (error) {
-//       // Sentry or Teams hook
-
-
-//       // fallback ui
-//       return (
-//         <div className="error-screen">
-//           <h2>An error has occured</h2>
-//           <h4>{error.message}</h4>
-//         </div>
-//       )
-//     } else {
-//       return <React.Fragment>{props.children}</React.Fragment>
-//     }
-//   }
-
-// export default ErrorBoundary;
-
-// import React, { Catch } from 'react'
-
-// const ErrorBoundary = ({ children }) => {
-//   return (
-//     <div>{children}</div>
-//   )
-// }
-
-// export default ErrorBoundary
