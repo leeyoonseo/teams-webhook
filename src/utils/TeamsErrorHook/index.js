@@ -1,93 +1,87 @@
 import axios from 'axios';
 import errorMessage from './message/error';
 
-// (테스트) yoon-test channel
-// const teamsChannelAPI = '/webhookb2/7d3fcf9f-30c9-4b1f-9290-ebfd7b3831d3@2f455741-b4a6-43b0-b9ae-e860bf49b020/IncomingWebhook/0356a389e55b430b8056f9d14b64c34d/e3761004-6a49-4e81-8ebf-43fdb0f27aca';
+const TeamsErrorHook = (() => {
+  const _hookInstance = window.TeamsErrorHook || {}; 
 
-// TODO:
-// - 전역 관리 (project 정보등 지속적으로 넣을 이유 없음)
-// new TeamsErrorHook({
-//  project: 'Teams Webhook Demo',
-//  channelUrl: teamsChannelAPI
-// }).call(error);
-// - 모듈화, tsx
-// - 크로스브라우징 (기준이 Chrome이므로 다른 브라우저에 대해서 확인되어야함.)
-// - ssr에 대한 지원 ? 
-// - 디테일한 정보 (유명한 lib 사용하여 종속성을 가져가면서 유저의 디테일한 정보(os, ip)들을 노출할 것인가.
-//  ㄴ UA 브라우저 및 디바이스 등 ua를 통해 디테일한 작업을 하고 싶다면..: ua-parser-js, @types/ua-parser-js
+  const _getRequestMessage = () => {
+    const { error } = _hookInstance;
+    const requestMessage = { ...errorMessage };
+    const title = `❗️${error.name}: ${error.message}`;
+    const maxStackTraceLineNum = 10;
+    const excludedLineNum = 0;
+    const stackTrace = error.stack.split('at', maxStackTraceLineNum).filter((_, i) => i !== excludedLineNum).join('<br/> at');
 
-class TeamsErrorHook {
-  constructor({ project, channelUrl }) {
-    this.name = 'TeamsErrorHook';
-    this.errorMessage = errorMessage;
-    this.project = project;
-    this.channelUrl = channelUrl;
-    this.error = null;
-  }
-
-  get title () {
-    return `❗️${this.error.name}: ${this.error.message}`;
-  }
-
-  get stackTrace() {
-    const stackArr = this.error.stack.split('at');
-    return stackArr.filter((_, i) => i !== 0).join('<br/> at');
-  }
-
-  get today() {
-    let date = new Date();
-    // 브라우저체크 필요
-    date = date.toLocaleString('ko-kr');
-    return date.replace(/ /g, '').replace('오전', ' am').replace('오후', ' pm');
-  }
-
-  get facts() {
-    const { href } = window.location;
-
-    return [
+    console.log('stackTrace', stackTrace)
+    let today = new Date();
+    today = today.toLocaleString('ko-kr'); // 브라우저 체크, 사용하려는 포맷 결정 필요
+    today = today.replace(/ /g, '').replace('오전', ' am').replace('오후', ' pm');
+    const facts = [
       {
         'name': 'Project',
-        'value': this.project
+        'value': _hookInstance.project
       },
       {
         'name': 'Date',
-        'value': this.today,
-    },
-    {
+        'value': today,
+      },
+      {
         'name': 'URL',
-        'value': href,
+        'value': window.location.href,
       },
     ];
-  }
 
-  async _request() {
+    requestMessage.title = title;
+    requestMessage.text = stackTrace;
+    requestMessage.message = error.message;
+    requestMessage.sections[0].activitySubtitle = window.navigator.userAgent;
+    requestMessage.sections[0].facts = facts;
+   
+    return requestMessage;
+  };
+ 
+  const _request = async () => {
     try {
-      const response = await new axios.post(
-        this.channelUrl,
-        this.errorMessage
+      const res = await new axios.post(
+        _hookInstance.channelUrl,
+        _hookInstance.requestMessage
       );
  
       // API 전송 실패
-      if (!(response.statusText === 'OK' && response.data === 1)) {
+      if (!(res.statusText === 'OK' && res.data === 1)) {
         console.log('Failed to send error message!');
       }
     } catch (error) {
       console.log('Failed to send error message! :>>', error);
     }
+  };
+
+  const _init = ({ project, channelUrl }) => {
+    if (!window.TeamsErrorHook) {
+      _hookInstance.project = project;
+      _hookInstance.channelUrl = channelUrl;
+
+      window.TeamsErrorHook = _hookInstance;
+    }
+
+    return _hookInstance;
+  };
+
+  const _catch = (error) => {
+    if (error && _hookInstance?.project && _hookInstance?.channelUrl) {
+      _hookInstance.error = error;
+      _hookInstance.requestMessage = _getRequestMessage();
+     
+      _request();
+    } else {
+      console.log('TeamsErrorHook의 init을 선행해야합니다.');
+    }
+  };
+
+  return {
+    init: _init,
+    catch: _catch,
   }
-
-  call(error) {
-    this.error = error;
-
-    this.errorMessage.title = this.title;
-    this.errorMessage.text = this.stackTrace;
-    this.errorMessage.message = error.message;
-    this.errorMessage.sections[0].activitySubtitle = window.navigator.userAgent;
-    this.errorMessage.sections[0].facts = this.facts;
-
-    this._request();
-    return this;
-  }
-}
+})();
 
 export default TeamsErrorHook;
