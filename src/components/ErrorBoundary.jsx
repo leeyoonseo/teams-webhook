@@ -1,5 +1,5 @@
 import React from 'react';
-import TeamsErrorHook from '../modules/TeamsErrorHook/index';
+import TeamsErrorHook from '../utils/TeamsErrorHook/index';
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -9,7 +9,7 @@ class ErrorBoundary extends React.Component {
   }
 
   componentDidCatch(error, errorInfo) {
-    TeamsErrorHook.catch(error);
+    TeamsErrorHook.captureException(error);
   }
 
   render() {

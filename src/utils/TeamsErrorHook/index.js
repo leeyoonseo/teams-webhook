@@ -8,18 +8,23 @@ const TeamsErrorHook = (() => {
     const { error } = _hookInstance;
     const requestMessage = { ...errorMessage };
     const title = `❗️${error.name}: ${error.message}`;
-    const maxStackTraceLineNum = 10;
-    const excludedLineNum = 0;
+    const maxStackTraceLineNum = 10; // 외부 옵션으로 뺄 것인가
+    const excludedLineNum = 0; // 0번째는 에러 타입? -> 브라우저 체크 필요
+    // 브라우저 체크 필요
     const stackTrace = error.stack.split('at', maxStackTraceLineNum).filter((_, i) => i !== excludedLineNum).join('<br/> at');
+    console.dir(error)
 
-    console.log('stackTrace', stackTrace)
     let today = new Date();
     today = today.toLocaleString('ko-kr'); // 브라우저 체크, 사용하려는 포맷 결정 필요
     today = today.replace(/ /g, '').replace('오전', ' am').replace('오후', ' pm');
     const facts = [
       {
         'name': 'Project',
-        'value': _hookInstance.project
+        'value': _hookInstance.name
+      },
+      {
+        'name': 'Environment',
+        'value': 'development',
       },
       {
         'name': 'Date',
@@ -56,9 +61,9 @@ const TeamsErrorHook = (() => {
     }
   };
 
-  const _init = ({ project, channelUrl }) => {
+  const _init = ({ name, channelUrl }) => {
     if (!window.TeamsErrorHook) {
-      _hookInstance.project = project;
+      _hookInstance.name = name;
       _hookInstance.channelUrl = channelUrl;
 
       window.TeamsErrorHook = _hookInstance;
@@ -67,8 +72,8 @@ const TeamsErrorHook = (() => {
     return _hookInstance;
   };
 
-  const _catch = (error) => {
-    if (error && _hookInstance?.project && _hookInstance?.channelUrl) {
+  const _captureException = (error) => {
+    if (error && _hookInstance?.name && _hookInstance?.channelUrl) {
       _hookInstance.error = error;
       _hookInstance.requestMessage = _getRequestMessage();
      
@@ -80,7 +85,7 @@ const TeamsErrorHook = (() => {
 
   return {
     init: _init,
-    catch: _catch,
+    captureException: _captureException,
   }
 })();
 
