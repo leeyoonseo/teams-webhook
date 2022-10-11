@@ -1,14 +1,18 @@
 import React, { useCallback, useEffect } from 'react';
 import './App.css';
 
-import TeamsErrorHook from './utils/TeamsErrorHook/index';
-
 const App = () => {
+ 
+  useEffect(() => {
+    // throw Error('useEffect에서 에러발생!');
+  }, []);
+
   const onClick = useCallback(async() => {
     try {
       new Promise('/');
     } catch (error) {
-      TeamsErrorHook.captureException(error);
+      /* global TeamsWebhook */
+      TeamsWebhook.send(error);
     }
   }, []);
 

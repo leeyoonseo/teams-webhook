@@ -1,15 +1,12 @@
-import React from 'react';
-import TeamsErrorHook from '../utils/TeamsErrorHook/index';
-
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
     this.state = { hasError: false };
-    this.errorhook = props.errorhook;
   }
 
   componentDidCatch(error, errorInfo) {
-    TeamsErrorHook.captureException(error);
+    /* global TeamsWebhook */
+    TeamsWebhook.send(error);
   }
 
   render() {

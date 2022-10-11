@@ -3,11 +3,11 @@ import { createRoot } from 'react-dom/client';
 import ErrorBoundary from './components/ErrorBoundary';
 import App from './App';
 import './index.css';
-import TeamsErrorHook from './utils/TeamsErrorHook/index';
+import TeamsWebhook from './utils/teams-webhook/index';
 
-TeamsErrorHook.init({
-  name: 'Teams Webhook Demo',
-  channelUrl: process.env.TEAMS_CHANNEL_PARAMETER,
+TeamsWebhook.init({
+  project: process.env.PROJECT_NAME,
+  channelUrl: process.env.CHANNEL_URL,
 });
 
 const root = createRoot(document.getElementById('root'));

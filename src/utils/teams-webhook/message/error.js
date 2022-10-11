@@ -1,4 +1,4 @@
-module.exports = {
+const message = {
   "type": "MessageCard",
   "themeColor": "e13f2f",
   "title": "❗️Error: Error",
@@ -35,9 +35,11 @@ module.exports = {
             // },
             // {
             //    "name": "Url",
-            //    "value": "https://search.tmon.co.kr/search"
+            //    "value": "http://localhost:3000"
             // },
         ],
       }
   ],
 };
+
+module.exports = message;
