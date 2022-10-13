@@ -11,8 +11,10 @@ const config = {
     filename: 'index.bundle.js',
   },
   resolve: {
-    extensions: ['.js', '.jsx'],
-    alias: {},
+    extensions: ['.js', '.jsx', '.ts', '.tsx'],
+    alias: {
+      '@src': path.resolve(__dirname, './src/'),
+    },
   },
   devServer: {
     host: 'localhost',
@@ -29,17 +31,33 @@ const config = {
   plugins: [
     new HtmlWebpackPlugin({
       template: 'index.html',
+      minify: process.env.NODE_ENV === 'production' ? {
+        collapseWhitespace: true, // 빈칸 제거
+        removeComments: true, // 주석 제거
+    } : false,
     }),
   ],
   module: {
     rules: [
       {
-        test: /\.(js|jsx)$/i,
+        test: /\.tsx?$/,
         exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-        },
+        use: ["babel-loader", "ts-loader"],
       },
+      // {
+      //   test: /\.(ts|tsx)$/i,
+      //   exclude: /node_modules/,
+      //   use: {
+      //     loader: 'babel-loader',
+      //   },
+      // },
+      // {
+      //   test: /\.(ts|tsx)$/, 
+      //   exclude: /node_module/,
+      //   use: {
+      //     loader: "ts-loader",
+      //   },
+      // },
       {
         test: /\.(eot|svg|ttf|woff|woff2|png|jpg|gif)$/i,
         type: 'asset',
