@@ -10,9 +10,13 @@ TeamsWebhook.init({
   channelUrl: process.env.CHANNEL_URL,
 });
 
-const root = createRoot(document.getElementById('root'));
+const root = document.getElementById('root');
 
-root.render(
+if (!root) {
+  throw new Error('html에 #root 가 없습니다.');
+}
+
+createRoot(root).render(
   <React.StrictMode>
     <ErrorBoundary>
       <App />
