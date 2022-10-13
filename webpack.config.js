@@ -5,7 +5,7 @@ const isProduction = process.env.NODE_ENV === 'production';
 
 const config = {
   mode: isProduction ? 'production' : 'development',
-  entry: path.resolve(__dirname, '/src/index'),
+  entry: path.resolve(__dirname, './src/index'),
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'index.bundle.js',
@@ -31,29 +31,29 @@ const config = {
       template: 'index.html',
     }),
   ],
-    module: {
+  module: {
     rules: [
-    {
-      test: /\.(js|jsx)$/i,
-      exclude: /node_modules/,
-      use: {
-        loader: 'babel-loader',
-      },
-    },
-    {
-      test: /\.(eot|svg|ttf|woff|woff2|png|jpg|gif)$/i,
-      type: 'asset',
-    },
-    {
-      test: /\.html$/,
-      exclude: /node_modules/,
-      use: {
-        loader: 'html-loader',
-        options: {
-          minimize: true,
+      {
+        test: /\.(js|jsx)$/i,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
         },
       },
-    },
+      {
+        test: /\.(eot|svg|ttf|woff|woff2|png|jpg|gif)$/i,
+        type: 'asset',
+      },
+      {
+        test: /\.html$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'html-loader',
+          options: {
+            minimize: true,
+          },
+        },
+      },
       {
         test: /\.css$/,
         use: ["style-loader", "css-loader"],

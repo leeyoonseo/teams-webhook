@@ -1,6 +1,6 @@
 import axios from 'axios';
-import errorMessage from './messages/error';
-import defaultMessage from './messages/default';
+import errorMessage from './message/error';
+import defaultMessage from './message/default';
 
 export default (() => {
   const _teamsWebhook = window.TeamsWebhook || {};
