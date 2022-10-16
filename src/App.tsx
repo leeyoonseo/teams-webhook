@@ -9,10 +9,12 @@ const App = () => {
 
   const onClick = useCallback(async() => {
     try {
-      new Promise('/');
+      new Promise(() => {
+        throw Error('Error!')
+      });
     } catch (error) {
       /* global TeamsWebhook */
-      TeamsWebhook.send(error);
+      // TeamsWebhook.send(error);
     }
   }, []);
 

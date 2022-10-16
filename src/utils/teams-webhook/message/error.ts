@@ -1,4 +1,25 @@
-const message = {
+interface Fact {
+  name: string;
+  value: string;
+}
+
+interface Section {
+  activityTitle: string;
+  activitySubtitle: string;
+  markdown: boolean;
+  facts: Fact[];
+}
+
+export interface ErrorMessage {
+  type: string;
+  themeColor?: string;
+  title: string;
+  text: string;
+  message?: string;
+  sections: Section[];
+}
+
+export const errorMessage: ErrorMessage = {
   "type": "MessageCard",
   "themeColor": "e13f2f",
   "title": "❗️Error: Error",
@@ -41,5 +62,3 @@ const message = {
       }
   ],
 };
-
-module.exports = message;
