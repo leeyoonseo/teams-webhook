@@ -1,10 +1,4 @@
-export interface DefaultMessage {
-  type: string;
-  themeColor?: string;
-  title: string;
-  text: string;
-}
-
+import { DefaultMessage } from './../@typing/message';
 export const defaultMessage: DefaultMessage = {
   "type":"MessageCard",
   "themeColor":"0072C6",

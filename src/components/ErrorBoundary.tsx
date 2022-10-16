@@ -1,4 +1,5 @@
-import React, { Component, ErrorInfo, ReactNode } from "react";
+import { Component, ErrorInfo, ReactNode } from "react";
+import { IsError } from "../utils/teams-webhook/@typing";
 
 interface State {
   hasError: boolean;
@@ -17,10 +18,10 @@ class ErrorBoundary extends Component<Props, State> {
     return { hasError: true };
   }
 
-  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+  componentDidCatch(error: IsError, errorInfo: ErrorInfo) {
     console.error("Uncaught error:", error, errorInfo);
     /* global TeamsWebhook */
-    // TeamsWebhook.send(error);
+    window.TeamsWebhook.error(error);
   }
 
   render() {

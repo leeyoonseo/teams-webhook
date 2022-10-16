@@ -14,7 +14,9 @@ const App = () => {
       });
     } catch (error) {
       /* global TeamsWebhook */
-      // TeamsWebhook.send(error);
+      if (error instanceof Error) {
+        window.TeamsWebhook.error(error);
+      }
     }
   }, []);
 

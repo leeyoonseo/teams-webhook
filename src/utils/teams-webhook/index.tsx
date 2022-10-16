@@ -1,30 +1,8 @@
-import axios, { AxiosError, AxiosResponse } from 'axios';
-import { errorMessage, ErrorMessage } from './message/error';
-import { defaultMessage, DefaultMessage } from './message/default';
-
-type IsError = Error | AxiosError;
-
-interface InitArgs {
-  channelUrl: string;
-  project: string;
-}
-
-// TODO: 별도의 tsconfig.json을 가진다면 index.d.ts에 옮길것
-declare global {
-  interface Window {
-    TeamsWebhook: {
-      name: 'Teams-webhook';
-      project: string;
-      type: string; // 'error' | 'default';
-      channelUrl: string;
-      message: ErrorMessage | DefaultMessage;
-      data: Error | AxiosError | DefaultMessage;
-      init: (args: InitArgs) => void;
-      send: (data: IsError | DefaultMessage) => void;
-    };
-  }
-}
-
+import axios, {  AxiosResponse } from 'axios';
+import { errorMessage } from './message/error';
+import { defaultMessage } from './message/default';
+import { InitProps, IsError } from './@typing';
+import { ErrorMessage, DefaultMessage } from './@typing/message';
 
 export default (() => {
   const _teamsWebhook = window.TeamsWebhook || {};
@@ -59,7 +37,7 @@ export default (() => {
 
   // TeamsWebhook.send(error); - error 객체만 넣어주면 됨
   const _getErrorMessage = (error: IsError) => {
-    const message = { ...errorMessage }
+    const message: ErrorMessage = { ...errorMessage };
     const title = `❗️${error.name}: ${error.message}`;
     const maxStackTraceLineNum = 10;
     const excludedLineNum = 0;
@@ -99,33 +77,40 @@ export default (() => {
   //  text: '잘가나?'
   // });
   const _getDefaultMessage = ({ title, text }: DefaultMessage) => {
-    const message = { ...defaultMessage };
+    const message: DefaultMessage = { ...defaultMessage };
     message.title = title || '제목을 입력하세요.';
     message.text = text || '메시지를 입력하세요.';
 
     return message;
   }; 
 
-  const send = (data: IsError | DefaultMessage) => {
-    // 필수 데이터가 없는 경우, 진행 불가
+  // 에러
+  const error = (data: IsError) => {
     if (!_teamsWebhook?.channelUrl || !data) {
       throw Error('필수 데이터가 없다.');
     }
 
     _teamsWebhook.data = data;
-
-    if (data instanceof Error || data instanceof AxiosError) {
-      _teamsWebhook.type = 'error';
-      _teamsWebhook.message = _getErrorMessage(data);
-    } else {
-      _teamsWebhook.message = _getDefaultMessage(data);
-      _teamsWebhook.type = data?.type ?? 'default';
-    }
+    _teamsWebhook.type = 'error';
+    _teamsWebhook.message = _getErrorMessage(data);
 
     _postMessage();
   };
 
-  const init = ({ project, channelUrl }: InitArgs) => {
+  // 일반
+  const send = (data: DefaultMessage) => {
+    if (!_teamsWebhook?.channelUrl || !data) {
+      throw Error('필수 데이터가 없다.');
+    }
+
+    _teamsWebhook.data = data;
+    _teamsWebhook.message = _getDefaultMessage(data);
+    _teamsWebhook.type = data?.type ?? 'default';
+
+    _postMessage();
+  };
+
+  const init = ({ project, channelUrl }: InitProps) => {
     _teamsWebhook.project = project;
     _teamsWebhook.channelUrl = channelUrl;
   };
@@ -133,6 +118,7 @@ export default (() => {
   _teamsWebhook.name = 'Teams-webhook';
   _teamsWebhook.init = init;
   _teamsWebhook.send = send;
+  _teamsWebhook.error = error;
 
   window.TeamsWebhook = _teamsWebhook;
   return _teamsWebhook;

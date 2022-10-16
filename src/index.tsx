@@ -5,10 +5,12 @@ import App from './App';
 import './index.css';
 import TeamsWebhook from './utils/teams-webhook/index';
 
-TeamsWebhook.init({
-  project: process.env.PROJECT_NAME,
-  channelUrl: process.env.CHANNEL_URL,
-});
+if (process.env.PROJECT_NAME && process.env.CHANNEL_URL) {
+  TeamsWebhook.init({
+    project: process.env.PROJECT_NAME,
+    channelUrl: process.env.CHANNEL_URL,
+  });
+}
 
 const root = document.getElementById('root');
 
